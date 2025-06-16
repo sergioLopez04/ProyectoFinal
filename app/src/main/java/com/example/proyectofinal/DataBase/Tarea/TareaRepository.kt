@@ -89,14 +89,14 @@ class TareaRepository(
     suspend fun sincronizarDesdeServidor(userId: Int) {
         withContext(ioDispatcher) {
             try {
-                // 1️⃣ Tareas de proyectos propios
+                
                 val tareasPropias = api.obtenerTareasDelUsuario(userId)
                 tareaDao.insertarTodos(tareasPropias.map { it.toEntity() })
 
-                // 2️⃣ Obtener IDs de proyectos unidos
+               
                 val proyectoIdsUnidos = apiP.obtenerProyectoIdsPorUsuario(userId)
 
-                // 3️⃣ Tareas de cada proyecto unido
+                
                 proyectoIdsUnidos.forEach { proyectoId ->
                     try {
                         val tareasProyectoUnido = api.obtenerTareasDelProyecto(proyectoId)
@@ -117,12 +117,12 @@ class TareaRepository(
     fun getTodasLasTareasDelUsuarioIncluyendoUnidos(userId: Int): Flow<List<Tareas>> {
         val tareasPropiasFlow = tareaDao.getTareasPorUsuario(userId)
 
-        // Usamos flow builder para convertir la lista en un flow
+        
         val tareasUnidasFlows = flow {
             val proyectoIdsUnidos = apiP.obtenerProyectoIdsPorUsuario(userId)
             val flows = proyectoIdsUnidos.map { id -> tareaDao.getTareasDelProyecto(id) }
 
-            // Combinamos todas las tareas
+            
             emitAll(
                 combine(listOf(tareasPropiasFlow) + flows) { listas ->
                     listas.flatMap { it }.distinctBy { it.id }
@@ -152,7 +152,7 @@ class TareaRepository(
 
     suspend fun actualizarEstado(tarea: Tareas) {
         withContext(ioDispatcher) {
-            tareaDao.updateTarea(tarea)  // tarea ya viene con el campo actualizado
+            tareaDao.updateTarea(tarea)  
 
             try {
                 api.actualizarEstadoTarea(tarea.id, TareasApiService.EstadoRequest(tarea.completada))
