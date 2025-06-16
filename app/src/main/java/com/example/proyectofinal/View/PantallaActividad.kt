@@ -329,7 +329,7 @@ private fun GraficoCircular(
                     color = Color.Black,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle,
-                    useCenter = true, // O false si no quieres que vaya al centro
+                    useCenter = true,
                     style = Stroke(
                         width = with(density) { 1.5.dp.toPx() },
                         cap = StrokeCap.Butt,
