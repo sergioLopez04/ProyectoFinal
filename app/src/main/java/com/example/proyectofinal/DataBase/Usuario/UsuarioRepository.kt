@@ -26,17 +26,15 @@ class UsuarioRepository(private val usuarioDao: UsuarioDao, private val api: Api
     }
 
     suspend fun obtenerIdNumerico(firebaseUid: String): Int {
-        // ❌ Ignorar local si es el primer login, o si estás sincronizando
+        
         val remoto = api.obtenerUsuarioPorFirebaseUid(firebaseUid)
         Log.d("usuarioRepo", "Remoto desde API: $remoto")
 
-        usuarioDao.insertar(remoto) // 🔁 Esto también actualiza el local si ya existe
+        usuarioDao.insertar(remoto) 
         return remoto.id
     }
 
     suspend fun obtenerNombrePorUid(uid: String): String? {
-        // Llama a tu API o base de datos local/remota
-        // Ejemplo si usás Retrofit o Room:
         return api.obtenerUsuarioPorFirebaseUid(uid)?.nombre
     }
 
