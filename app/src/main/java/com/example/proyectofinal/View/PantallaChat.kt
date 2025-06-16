@@ -100,25 +100,23 @@ fun ChatScreen(projectId: String, navController: NavController, repo: UsuarioRep
 
 
     BackHandler {
-        // 1️⃣ Sacamos el Chat del back stack
+       
         navController.popBackStack()
 
-        // 2️⃣ Obtenemos el user ID correctamente como Int
+        
         val firebaseUserId = FirebaseAuth.getInstance().currentUser?.uid
         if (firebaseUserId != null) {
-            // Usa tu repositorio para obtener el ID numérico correspondiente (si aplica)
-            // O si ya lo tienes, pásalo directamente al Composable
 
             scope.launch {
                 val user = repo.obtenerIdNumerico(firebaseUserId)
 
-                // 3️⃣ Navegamos con el ID correcto
+               
                 val timestamp = System.currentTimeMillis()
                 navController.navigate("main/$user/inicio?reload=$timestamp") {
                     launchSingleTop = true
                 }
 
-                // 4️⃣ Limpieza opcional
+
                 prefs.edit().remove("viene_de_enlace").apply()
             }
         }
@@ -139,7 +137,7 @@ fun ChatScreen(projectId: String, navController: NavController, repo: UsuarioRep
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        // Aquí puedes añadir miembros si lo necesitas
+                        
                     }
                 }
             )
