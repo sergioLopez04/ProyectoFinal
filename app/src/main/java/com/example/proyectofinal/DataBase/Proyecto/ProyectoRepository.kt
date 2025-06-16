@@ -86,13 +86,11 @@ class ProyectoRepository(
     suspend fun sincronizarDesdeServidor(userId: Int) {
         withContext(ioDispatcher) {
             try {
-                // ——————————————————————————————
-                // 1️⃣ Traer tus proyectos “principales”
+                
                 val proyectosRemotos = api.obtenerProyectosPorUsuario(userId)
                 dao.insertarTodos(proyectosRemotos.map { it.toEntity() })
 
-                // ——————————————————————————————
-                // 2️⃣ Traer lista de IDs de proyectos unidos (tabla usuarios_proyectos)
+               
                 val proyectoIdsUnidos: List<Int> = api.obtenerProyectoIdsPorUsuario(userId)
 
                 Log.d("proyectoIdsUnidos", proyectoIdsUnidos.toString())
@@ -126,20 +124,20 @@ class ProyectoRepository(
         }
     }
 
-    /** 1️⃣ Flujo de proyectos creados localmente */
+    
     fun obtenerProyectosCreadosPorUsuario(userId: Int): Flow<List<Proyecto>> =
         dao.obtenerPorUsuario(userId)
 
-    /** 2️⃣ Flujo “one shot” de proyectos unidos vía API */
+   
     private fun proyectosUnidosDesdeApi(userId: Int): Flow<List<Proyecto>> = flow {
-        // 2.1 obtener lista de IDs
+      
         val ids = api.obtenerProyectoIdsPorUsuario(userId)
-        // 2.2 para cada ID, llamar a la API y guardar en local si quieres cachear
+        
         val lista = ids.mapNotNull { proyectoId ->
             try {
                 api.obtenerProyectoPorId(proyectoId)
                     .toEntity()
-                    .also { dao.insertar(it) }  // opcional: actualizar cache
+                    .also { dao.insertar(it) }  
             } catch (e: Exception) {
                 null
             }
@@ -147,7 +145,7 @@ class ProyectoRepository(
         emit(lista)
     }
 
-    /** 3️⃣ Flujo combinado: crea + unidos */
+    
     fun obtenerTodosLosProyectosDelUsuario(userId: Int): Flow<List<Proyecto>> =
         combine(
             obtenerProyectosCreadosPorUsuario(userId),
